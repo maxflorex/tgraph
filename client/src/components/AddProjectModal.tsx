@@ -1,46 +1,25 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
-import { FaUser } from 'react-icons/fa';
-import { ADD_CLIENT } from '../mutations/ClientMutations';
-import { GET_CLIENTS } from '../queries/clientQueries';
+import { FaList } from 'react-icons/fa';
+import { GET_PROJECTS } from '../queries/projectQueries';
 
 type Props = {};
 
-const AddClientModal = (props: Props) => {
+const AddProjectModal = (props: Props) => {
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-
-    type addType = {
-        name: string;
-        phone: string;
-        email: string;
-      };
-
-    const [addClient] : any = useMutation(ADD_CLIENT, {
-        variables: { name, email, phone },
-        update(cache, { data: { addClient } }) {
-            const { clients }: any = cache.readQuery({
-                query: GET_CLIENTS,
-            });
-            cache.writeQuery({
-                query: GET_CLIENTS,
-                data: { clients: [...clients, addClient] },
-            });
-        },
-    });
+    const [description, setDescription] = useState('');
+    const [clientId, setClientId] = useState('');
+    const [status, setStatus] = useState('new');
 
     const onSubmit = (e: any) => {
         e.preventDefault();
-        if (name === '' || phone === '' || email === '') {
+        if (name === '' || description === '' || status === '') {
             return alert('Please fill all fields');
         }
 
-        addClient(name, email, phone);
-
         setName('');
-        setPhone('');
-        setEmail('');
+        setDescription('');
+        setStatus('new');
     };
 
     return (
@@ -49,14 +28,17 @@ const AddClientModal = (props: Props) => {
                 type="button"
                 className="btn btn-primary"
                 data-bs-toggle="modal"
-                data-bs-target="#addClientModal"
+                data-bs-target="#AddProjectModal"
             >
-                Add Client
+                <div className="d-flex align-items-center">
+                    <FaList />
+                    New Project
+                </div>
             </button>
             <div
                 className="modal fade"
-                id="addClientModal"
-                aria-labelledby="addClientModalLabel"
+                id="AddProjectModal"
+                aria-labelledby="AddProjectModalLabel"
                 aria-hidden="true"
             >
                 <div className="modal-dialog">
@@ -64,7 +46,7 @@ const AddClientModal = (props: Props) => {
                         <div className="modal-header">
                             <h5
                                 className="modal-title"
-                                id="addClientModalLabel"
+                                id="AddProjectModalLabel"
                             >
                                 Modal title
                             </h5>
@@ -90,32 +72,40 @@ const AddClientModal = (props: Props) => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Email</label>
-                                    <input
-                                        type="text"
+                                    <label className="form-label">
+                                        Description
+                                    </label>
+                                    <textarea
                                         className="form-control"
-                                        id="name"
-                                        value={email}
+                                        id="description"
+                                        value={description}
                                         onChange={(e) =>
-                                            setEmail(e.target.value)
+                                            setDescription(e.target.value)
                                         }
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Phone</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="name"
-                                        value={phone}
+                                    <label className="form-label">Status</label>
+                                    <select
+                                        id="status"
+                                        className="form-select"
+                                        value={status}
                                         onChange={(e) =>
-                                            setPhone(e.target.value)
+                                            setStatus(e.target.value)
                                         }
-                                    />
+                                    >
+                                        <option value="new">Not Started</option>
+                                        <option value="progress">
+                                            In Progress
+                                        </option>
+                                        <option value="completed">
+                                            Completed
+                                        </option>
+                                    </select>
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-secondary"
+                                    className="btn btn-primary"
                                     data-bs-dismiss="modal"
                                 >
                                     Submit
@@ -129,4 +119,4 @@ const AddClientModal = (props: Props) => {
     );
 };
 
-export default AddClientModal;
+export default AddProjectModal;
