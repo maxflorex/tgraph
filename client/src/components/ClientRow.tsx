@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client';
 import { FaTrash } from 'react-icons/fa';
 import { DELETE_CLIENT } from '../mutations/ClientMutations';
 import { GET_CLIENTS } from '../queries/clientQueries';
+import { GET_PROJECTS } from '../queries/projectQueries';
 
 type Props = {
     client: any;
@@ -13,20 +14,20 @@ const ClientRow = ({ client }: Props) => {
         
         //* REFRESH AFTER DELITING ITEM
         // OPTION 1 - NOT RECOMMENDED
-        // refetchQueries: [{ query: GET_CLIENTS }],
+        refetchQueries: [{ query: GET_CLIENTS }, { query: GET_PROJECTS}],
 
         // OPTION 2 - RECOMMENDED
-        update(cache, { data: { deleteClient } }) {
-            const { clients }: any = cache.readQuery({ query: GET_CLIENTS });
-            cache.writeQuery({
-                query: GET_CLIENTS,
-                data: {
-                    clients: clients.filter(
-                        (client: any) => client.id !== deleteClient.id
-                    ),
-                },
-            });
-        },
+        // update(cache, { data: { deleteClient } }) {
+        //     const { clients }: any = cache.readQuery({ query: GET_CLIENTS });
+        //     cache.writeQuery({
+        //         query: GET_CLIENTS,
+        //         data: {
+        //             clients: clients.filter(
+        //                 (client: any) => client.id !== deleteClient.id
+        //             ),
+        //         },
+        //     });
+        // },
     });
 
     return (
